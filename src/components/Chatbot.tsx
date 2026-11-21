@@ -57,31 +57,22 @@ export default function Chatbot() {
     setError(null);
 
     try {
-      const { data: session } = await supabase.auth.getSession();
-      const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat`;
-      const res = await fetch(url, {
+      const { data, error: invokeError } = await supabase.functions.invoke("chat", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${session?.session?.access_token ?? import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-          apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: trimmed, history }),
       });
 
-      const data = await res.json().catch(() => null);
-      if (!res.ok || data?.error) {
-        const msg = data?.error || `The AI assistant returned an error (status ${res.status}). Please try again.`;
+      if (invokeError) {
+        const msg = "Unable to reach the AI assistant. Please try again.";
         setError(msg);
-        setMessages((m) => [
-          ...m,
-          { role: "assistant", content: msg, ts: Date.now() },
-        ]);
+        setMessages((m) => [...m, { role: "assistant", content: msg, ts: Date.now() }]);
+      } else if (data?.error) {
+        const msg = data.error;
+        setError(msg);
+        setMessages((m) => [...m, { role: "assistant", content: msg, ts: Date.now() }]);
       } else if (data?.reply) {
-        setMessages((m) => [
-          ...m,
-          { role: "assistant", content: data.reply, ts: Date.now() },
-        ]);
+        setMessages((m) => [...m, { role: "assistant", content: data.reply, ts: Date.now() }]);
       } else {
         const msg = "The AI assistant returned an unexpected response. Please try again.";
         setError(msg);
