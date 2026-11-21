@@ -106,7 +106,7 @@ Deno.serve(async (req: Request) => {
       const errText = await groqRes.text();
       console.error("Groq error", groqRes.status, errText);
       return new Response(
-        JSON.stringify({ error: "The AI service is unavailable right now. Please try again shortly." }),
+        JSON.stringify({ error: `Groq ${groqRes.status}: ${errText.slice(0, 400)}` }),
         { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }

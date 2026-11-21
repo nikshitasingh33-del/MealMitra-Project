@@ -63,10 +63,22 @@ export default function Chatbot() {
         body: JSON.stringify({ message: trimmed, history }),
       });
 
-      if (invokeError) {
-        const msg = "Unable to reach the AI assistant. Please try again.";
-        setError(msg);
-        setMessages((m) => [...m, { role: "assistant", content: msg, ts: Date.now() }]);
+      let parsedError: string | null = null;
+      if (invokeError && typeof invokeError === "object" && "context" in invokeError) {
+        const resp = (invokeError as { context: Response }).context;
+        if (resp && typeof resp.json === "function") {
+          try {
+            const errBody = await resp.json();
+            parsedError = errBody?.error ?? null;
+          } catch { /* not JSON */ }
+        }
+      } else if (invokeError) {
+        parsedError = invokeError instanceof Error ? invokeError.message : String(invokeError);
+      }
+
+      if (parsedError) {
+        setError(parsedError);
+        setMessages((m) => [...m, { role: "assistant", content: parsedError, ts: Date.now() }]);
       } else if (data?.error) {
         const msg = data.error;
         setError(msg);
