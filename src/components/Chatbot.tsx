@@ -59,21 +59,21 @@ export default function Chatbot() {
     try {
       const { data, error: invokeError } = await supabase.functions.invoke("chat", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: trimmed, history }),
+        body: { message: trimmed, history },
       });
 
       let parsedError: string | null = null;
-      if (invokeError && typeof invokeError === "object" && "context" in invokeError) {
-        const resp = (invokeError as { context: Response }).context;
-        if (resp && typeof resp.json === "function") {
+      if (invokeError) {
+        const ctx = (invokeError as { context?: Response }).context;
+        if (ctx && typeof ctx.json === "function") {
           try {
-            const errBody = await resp.json();
+            const errBody = await ctx.json();
             parsedError = errBody?.error ?? null;
           } catch { /* not JSON */ }
         }
-      } else if (invokeError) {
-        parsedError = invokeError instanceof Error ? invokeError.message : String(invokeError);
+        if (!parsedError) {
+          parsedError = invokeError instanceof Error ? invokeError.message : String(invokeError);
+        }
       }
 
       if (parsedError) {

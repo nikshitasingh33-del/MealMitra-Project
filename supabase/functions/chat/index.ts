@@ -38,7 +38,7 @@ Deno.serve(async (req: Request) => {
 
   if (req.method !== "POST") {
     return new Response(JSON.stringify({ error: "Method not allowed" }), {
-      status: 405,
+      status: 200,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
@@ -48,7 +48,7 @@ Deno.serve(async (req: Request) => {
     if (!apiKey) {
       return new Response(
         JSON.stringify({ error: "Chatbot is not configured. The GROQ_API_KEY secret has not been set." }),
-        { status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
@@ -61,7 +61,7 @@ Deno.serve(async (req: Request) => {
     if (!message) {
       return new Response(
         JSON.stringify({ error: "Please enter a question." }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
@@ -106,8 +106,8 @@ Deno.serve(async (req: Request) => {
       const errText = await groqRes.text();
       console.error("Groq error", groqRes.status, errText);
       return new Response(
-        JSON.stringify({ error: `Groq ${groqRes.status}: ${errText.slice(0, 400)}` }),
-        { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        JSON.stringify({ error: "The AI service is unavailable right now. Please try again shortly." }),
+        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
@@ -131,7 +131,7 @@ Deno.serve(async (req: Request) => {
     console.error("chat function error", err);
     return new Response(
       JSON.stringify({ error: "Something went wrong while contacting the AI service." }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
 });

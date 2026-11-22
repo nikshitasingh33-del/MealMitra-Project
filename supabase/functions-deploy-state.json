@@ -3,11 +3,7 @@
   "functions": {
     "chat": {
       "hasChanged": false,
-      "hash": "9d93a697991786e0554558df776714cd1a1918803a2b30bc497a03d659cf6c99"
-    },
-    "chat-debug": {
-      "hasChanged": false,
-      "hash": "63338f4fe12e7117e995d3519ff8441e148ea97f75876526de7210f4736f7911"
+      "hash": "97e616e2ed006293bec4963e41b43b94fdbe4f6ff4c97f337e8369201e4128e1"
     }
   }
 }
