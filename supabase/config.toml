@@ -2,3 +2,6 @@ project_id = "mealmitra"
 
 [functions.chat]
 verify_jwt = false
+
+[functions.get-env]
+verify_jwt = false

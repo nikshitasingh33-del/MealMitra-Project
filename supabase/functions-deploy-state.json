@@ -4,6 +4,10 @@
     "chat": {
       "hasChanged": false,
       "hash": "97e616e2ed006293bec4963e41b43b94fdbe4f6ff4c97f337e8369201e4128e1"
+    },
+    "get-env": {
+      "hasChanged": false,
+      "hash": "b90cf8aac48d74b32ebd499048ed755a67558f09c36f8caa842a3262dce1bfc1"
     }
   }
 }
